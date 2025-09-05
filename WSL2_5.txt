@@ -1,0 +1,262 @@
+Установка и настройка WSL2
+https://learn.microsoft.com/ru-ru/windows/wsl/
+
+Чтобы установить и использовать WSL2, вам понадобится одна из следующих версий Windows:
+- Windows 11: любая версия.
+- Windows 10: версия 1903 (сборка 18362) или новее.
+
+------------------------------------------------------------
+1. Включение виртуализации в BIOS
+
+Включите технологию виртуализации в BIOS/UEFI. Названия опций могут отличаться:
+- Intel: Intel Virtualization Technology или Intel VT-x.
+- AMD: AMD-V, SVM Mode или Virtualization.
+
+- Переведите опцию в состояние Enabled.
+
+------------------------------------------------------------
+2. Включение компонентов Windows в PowerShell
+
+Значок Windows -> введите PowerShell -> запустите от имени администратора.
+
+- Проверка состояния компонентов:
+Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux | Format-Table State
+Get-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform | Format-Table State
+
+- Если в столбце State написано Enabled, компонент включён.
+- Если Disabled, включите его командами:
+
+Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux -All -NoRestart
+Enable-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform -All -NoRestart
+
+- ! После включения компонентов перезагрузите компьютер:
+Restart-Computer
+
+- Команды, начинающиеся с wsl, запускать в PowerShell
+- Команды Ubuntu запускать в окне WSL2
+- Можно открыть два окна с PowerShell и WSL2
+------------------------------------------------------------
+3. Установка WSL2 и дистрибутива
+
+- Автоматическая установка WSL, WSL2 и Ubuntu:
+wsl --install
+
+- Ручная установка (без выбора дистрибутива):
+wsl --install --no-distribution
+
+- Проверка версии WSL:
+wsl --version
+
+------------------------------------------------------------
+4. Выбор и установка дистрибутива
+
+- Просмотр доступных дистрибутивов:
+wsl --list --online
+
+- Пример вывода:
+NAME                            FRIENDLY NAME
+Ubuntu-22.04                    Ubuntu 22.04 LTS
+Debian                          Debian GNU/Linux
+kali-linux                      Kali Linux Rolling
+FedoraLinux-42                  Fedora Linux 42
+...
+
+- Формат команды:
+wsl --install -d <ИмяИзКолонки NAME>
+
+- Пример установки Ubuntu 22.04:
+wsl --install -d Ubuntu-22.04
+
+- После установки введите имя пользователя и пароль для Ubuntu 22.04:
+Enter new UNIX username: as2
+New password: 12345
+Retype new password: 12345
+
+! При вводе пароля символы не отображаются.
+
+------------------------------------------------------------
+5. Настройка сочетаний клавиш терминала
+
+Для включения Ctrl+Shift+C (копировать) и Ctrl+Shift+V (вставить):
+- Клик правой кнопкой по заголовку окна терминала
+- Свойства -> Настройки
+- Включите "Использовать сочетание клавиш Ctrl+Shift+C/V..."
+- OK
+
+------------------------------------------------------------
+6. Проверка версий и работа с WSL
+
+- Проверка версии Ubuntu:
+lsb_release -a
+
+- Список дистрибутивов:
+wsl --list --verbose
+
+- Запущенные дистрибутивы:
+wsl --list --running
+
+- Выйти из Ubuntu:
+exit
+
+- Запустить Ubuntu:
+wsl
+   или дистрибутив по имени Ubuntu-22.04 (если несколько)
+wsl -d Ubuntu-22.04
+
+- Перезапустить WSL:
+wsl --shutdown
+
+------------------------------------------------------------
+7. Доступ к дискам Windows
+
+- Диск C:
+cd /mnt/c
+
+- Диск D:
+cd /mnt/d
+
+- Файлы Linux в Windows доступны по пути в проводнике:
+\\wsl$
+
+------------------------------------------------------------
+8. Пример установки программ в Ubuntu
+
+- Midnight Commander:
+sudo apt update
+sudo apt install mc
+
+- Запуск
+mc
+
+- Double Commander:
+sudo apt install doublecmd-gtk
+
+- Запуск
+doublecmd
+   или с правами root
+sudo doublecmd
+
+------------------------------------------------------------
+9. Основные команды Linux/WSL
+
+cd                             переход в домашнюю директорию
+pwd                            показать путь
+ls -la                         список файлов
+sudo apt update                обновить пакеты
+sudo apt install <имя_пакета>  установить пакет
+python3 --version              версия Python
+
+------------------------------------------------------------
+10. Управление дистрибутивами
+
+- Список и версии:
+wsl --list --verbose
+
+- Запущенные:
+wsl --list --running
+
+- Удалить дистрибутив:
+wsl --unregister Ubuntu-22.04
+
+- Файлы Linux доступны в Windows по пути:
+\\wsl$
+
+------------------------------------------------------------
+11. Экспорт и импорт (снимки)
+
+- Экспорт:
+wsl --export Ubuntu-22.04 "D:\wsl_ubuntu_etap1.tar"
+
+- Удаление перед импортом:
+wsl --unregister Ubuntu-22.04
+
+- Импорт:
+wsl --import Ubuntu-22.04 "D:\wsl_imported" "D:\wsl_ubuntu_etap1.tar" --version 2
+
+------------------------------------------------------------
+12. Настройка пользователя по умолчанию
+
+- После импорта будет root. Чтобы вернуть обычного пользователя:
+
+- Создать пользователя:
+adduser as2
+usermod -aG sudo as2
+
+- Настроить файл /etc/wsl.conf:
+sudo nano /etc/wsl.conf
+
+- Добавить строки:
+[user]
+default=as2
+
+- Сохранить (Ctrl+X, Y, Enter).
+
+   или вариант 2 без nano - добавить в конец /etc/wsl.conf секцию [user]
+echo -e "\n[user]\ndefault=as2" | sudo tee -a /etc/wsl.conf
+
+- Проверить:
+cat /etc/wsl.conf
+
+
+- Перезапустить WSL:
+exit
+wsl --shutdown
+
+
+=============================
+ КОРОТКО ПО WSL2
+=============================
+
+1. Включение компонентов (PowerShell, админ):
+Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux -All -NoRestart
+Enable-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform -All -NoRestart
+Restart-Computer
+
+2. Установка WSL:
+wsl --install                                   //авто (Ubuntu по умолчанию)
+wsl --install --no-distribution   // без дистрибутива
+wsl --install -d Ubuntu-22.04    // установка конкретного
+
+3. Управление дистрибутивами:
+wsl --list --online             // список доступных дистрибутивов
+wsl --list --verbose         // установленные и версия
+wsl --list --running          // запущенные
+wsl --unregister NAME   // удалить дистрибутив
+wsl --shutdown                 // перезапустить WSL
+
+4. Работа с Ubuntu:
+wsl                                   // вход в WSL
+wsl -d Ubuntu-22.04     // вход в конкретный
+exit                                   // выход
+
+5. Полезные Linux-команды:
+cd /mnt/c                    // диск C:
+cd /mnt/d                    // диск D:
+ls -la                           // список файлов
+pwd                              // текущий путь
+sudo apt update        // обновить пакеты
+sudo apt install mc   // установить пакет
+python3 --version     // версия Python
+
+6. Проверка версии Linux:
+lsb_release -a
+
+7. Экспорт / импорт (резервное копирование):
+wsl --export Ubuntu-22.04 "D:\ubuntu_backup.tar"
+wsl --unregister Ubuntu-22.04
+wsl --import Ubuntu-22.04 "D:\wsl_imported" "D:\ubuntu_backup.tar" --version 2
+
+8. Настройка пользователя по умолчанию:
+adduser as2
+usermod -aG sudo as2
+sudo nano /etc/wsl.conf
+   [user]
+   default=as2
+wsl --shutdown
+
+=============================
+
+
+    
+    
+    
