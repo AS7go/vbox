@@ -1,13 +1,11 @@
+Установка Ubuntu 24.04
+
 === Сайт Rufus
 https://rufus.ie
 
 === Сайт Ventoy.
 https://www.ventoy.net/en/index.html
 https://www.ventoy.net/en/download.html
-
-
-=== Ubuntu 22.04.5 LTS (Jammy Jellyfish) скачиваем Desktop image 64-bit PC (AMD64) desktop image
-https://releases.ubuntu.com/jammy/
 
 === Ubuntu 24.04.3 LTS, Ubuntu 25.04 скачиваем версию Desktop
 https://ubuntu.com/download/desktop
@@ -19,4 +17,4 @@ sudo swapon --show
 	Или:
 free -h
 
-https://github.com/AS7go/vbox/blob/main/ub25ventoy.txt
+https://github.com/AS7go/vbox/blob/main/ub24ventoy.txt
