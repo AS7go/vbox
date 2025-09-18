@@ -1,0 +1,654 @@
+Полное руководство по трем видео:
+
+1. Установка WSL2 — Ubuntu 22.04 в Windows 11 | Linux в Windows (пошаговый гайд) 
+	Ссылка: 
+https://youtu.be/iVO09kzKLDA
+
+2. Установка и настройка WSL, Ubuntu, VS code, Docker Desktop
+в Windows 11 и wsl2-Ubuntu 24.04
+
+3. Проверка Docker на реальном Примере Север, PHP, Apache, MySQL... в WSL2 - Ubuntu 24.04
+Установка Laravel 12, Sail, Breeze, Spatie, phpMyAdmin. Запуск проекта.
+
+------------------------------------------------------------
+
+Установка и настройка WSL2
+https://learn.microsoft.com/ru-ru/windows/wsl/
+
+Чтобы установить и использовать WSL2, вам понадобится одна из следующих версий Windows:
+- Windows 11: любая версия.
+- Windows 10: версия 1903 (сборка 18362) или новее.
+
+------------------------------------------------------------
+1. Включение виртуализации в BIOS
+
+Включите технологию виртуализации в BIOS/UEFI. Названия опций могут отличаться:
+- Intel: Intel Virtualization Technology или Intel VT-x.
+- AMD: AMD-V, SVM Mode или Virtualization.
+
+- Переведите опцию в состояние Enabled.
+
+------------------------------------------------------------
+2. Включение компонентов Windows в PowerShell
+
+Значок Windows -> введите PowerShell -> запустите от имени администратора.
+
+- Проверка состояния компонентов:
+Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux | Format-Table State
+Get-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform | Format-Table State
+
+- Если в столбце State написано Enabled, компонент включён.
+- Если Disabled, включите его командами:
+
+Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux -All -NoRestart
+Enable-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform -All -NoRestart
+
+- ! После включения компонентов перезагрузите компьютер:
+Restart-Computer
+
+- Команды, начинающиеся с wsl, запускать в PowerShell
+- Команды Ubuntu запускать в окне WSL2
+- Можно открыть два окна с PowerShell и WSL2
+------------------------------------------------------------
+3. Установка WSL2 и дистрибутива
+
+- Автоматическая установка WSL, WSL2 и Ubuntu:
+wsl --install
+
+	Подробно Ручная установка WSL2 в видео: 
+	Название: Установка WSL2 — Ubuntu 22.04 в Windows 11 | Linux в Windows (пошаговый гайд) 
+	Ссылка: https://youtu.be/iVO09kzKLDA
+
+- Ручная установка (без выбора дистрибутива):
+wsl --install --no-distribution
+
+- Проверка версии WSL:
+wsl --version
+
+------------------------------------------------------------
+4. Выбор и установка дистрибутива
+
+- Просмотр доступных дистрибутивов:
+wsl --list --online
+
+- Пример вывода:
+NAME                            FRIENDLY NAME
+Ubuntu-22.04                    Ubuntu 22.04 LTS
+Debian                          Debian GNU/Linux
+kali-linux                      Kali Linux Rolling
+FedoraLinux-42                  Fedora Linux 42
+...
+
+- Формат команды:
+wsl --install -d <ИмяИзКолонки NAME>
+
+- Пример установки Ubuntu 22.04:
+wsl --install -d Ubuntu-22.04
+
+- После установки введите имя пользователя и пароль для Ubuntu 22.04:
+Enter new UNIX username: as2
+New password: 12345
+Retype new password: 12345
+
+! При вводе пароля символы не отображаются.
+
+------------------------------------------------------------
+5. Настройка сочетаний клавиш терминала
+
+Для включения Ctrl+Shift+C (копировать) и Ctrl+Shift+V (вставить):
+- Клик правой кнопкой по заголовку окна терминала
+- Свойства -> Настройки
+- Включите "Использовать сочетание клавиш Ctrl+Shift+C/V..."
+- OK
+
+------------------------------------------------------------
+6. Проверка версий и работа с WSL
+
+- Проверка версии Ubuntu:
+lsb_release -a
+
+- Список дистрибутивов:
+wsl --list --verbose
+
+- Запущенные дистрибутивы:
+wsl --list --running
+
+- Выйти из Ubuntu:
+exit
+
+- Запустить Ubuntu:
+wsl
+   или дистрибутив по имени Ubuntu-22.04 (если несколько)
+wsl -d Ubuntu-22.04
+
+- Перезапустить WSL:
+wsl --shutdown
+
+------------------------------------------------------------
+7. Доступ к дискам Windows
+
+- Диск C:
+cd /mnt/c
+
+- Диск D:
+cd /mnt/d
+
+- Файлы Linux в Windows доступны по пути в проводнике:
+\\wsl$
+
+------------------------------------------------------------
+8. Пример установки программ в Ubuntu
+
+- Midnight Commander:
+sudo apt update
+sudo apt install mc
+
+- Запуск
+mc
+
+- Double Commander:
+sudo apt install doublecmd-gtk
+
+- Запуск
+doublecmd
+   или с правами root
+sudo doublecmd
+
+------------------------------------------------------------
+9. Основные команды Linux/WSL
+
+cd                              переход в домашнюю директорию
+pwd                             показать путь
+ls -la                          список файлов
+sudo apt update                 обновить пакеты
+sudo apt install <имя_пакета>   установить пакет
+python3 --version               версия Python
+
+------------------------------------------------------------
+10. Управление дистрибутивами
+
+- Список и версии:
+wsl --list --verbose
+
+- Запущенные:
+wsl --list --running
+
+- Удалить дистрибутив:
+wsl --unregister Ubuntu-22.04
+
+- Файлы Linux доступны в Windows по пути:
+\\wsl$
+
+------------------------------------------------------------
+11. Экспорт и импорт (снимки)
+
+- Экспорт:
+wsl --export Ubuntu-22.04 "D:\wsl_ubuntu_etap1.tar"
+
+- Удаление перед импортом:
+wsl --unregister Ubuntu-22.04
+
+- Импорт:
+wsl --import Ubuntu-22.04 "D:\wsl_imported" "D:\wsl_ubuntu_etap1.tar" --version 2
+
+------------------------------------------------------------
+12. Настройка пользователя по умолчанию
+
+- После импорта будет root. Чтобы вернуть обычного пользователя:
+
+- Создать пользователя:
+adduser as2
+usermod -aG sudo as2
+
+- Настроить файл /etc/wsl.conf:
+sudo nano /etc/wsl.conf
+
+- Добавить строки:
+[user]
+default=as2
+
+- Сохранить (Ctrl+X, Y, Enter).
+
+   или вариант 2 без nano - добавить в конец /etc/wsl.conf секцию [user]
+echo -e "\n[user]\ndefault=as2" | sudo tee -a /etc/wsl.conf
+
+- Проверить:
+cat /etc/wsl.conf
+
+
+- Перезапустить WSL:
+exit
+wsl --shutdown
+
+
+=============================
+ КОРОТКО ПО WSL2
+=============================
+
+1. Включение компонентов (PowerShell, админ):
+Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux -All -NoRestart
+Enable-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform -All -NoRestart
+Restart-Computer
+
+2. Установка WSL:
+wsl --install                                   //авто (Ubuntu по умолчанию)
+wsl --install --no-distribution   // без дистрибутива
+wsl --install -d Ubuntu-22.04    // установка конкретного
+
+3. Управление дистрибутивами:
+wsl --list --online             // список доступных дистрибутивов
+wsl --list --verbose         // установленные и версия
+wsl --list --running          // запущенные
+wsl --unregister NAME   // удалить дистрибутив
+wsl --shutdown                 // перезапустить WSL
+
+4. Работа с Ubuntu:
+wsl                                   // вход в WSL
+wsl -d Ubuntu-22.04     // вход в конкретный
+exit                                   // выход
+
+5. Полезные Linux-команды:
+cd /mnt/c                    // диск C:
+cd /mnt/d                    // диск D:
+ls -la                           // список файлов
+pwd                              // текущий путь
+sudo apt update        // обновить пакеты
+sudo apt install mc   // установить пакет
+python3 --version     // версия Python
+
+6. Проверка версии Linux:
+lsb_release -a
+
+7. Экспорт / импорт (резервное копирование):
+wsl --export Ubuntu-22.04 "D:\ubuntu_backup.tar"
+wsl --unregister Ubuntu-22.04
+wsl --import Ubuntu-22.04 "D:\wsl_imported" "D:\ubuntu_backup.tar" --version 2
+
+8. Настройка пользователя по умолчанию:
+adduser as2
+usermod -aG sudo as2
+sudo nano /etc/wsl.conf
+   [user]
+   default=as2
+wsl --shutdown
+
+=============================
+   
+VS Code будет запущен на вашей Windows, а вся работа с файлами, терминалом и расширениями будет происходить в вашей WSL Ubuntu.
+
+1. Скачайте и Установите Visual Studio Code в Windows по ссылке https://code.visualstudio.com/download 
+
+Важно: Во время установки убедитесь, что вы поставили галочку "Add to PATH", это позволит запускать VS Code прямо из терминала.
+
+2. Установите расширение "Remote - WSL" в новом окне PowerShell командой:
+code --install-extension ms-vscode-remote.remote-wsl
+
+Это позволит подключать VS Code к системе WSL и работать с ней, как с удалённой средой.
+
+3. Подключитесь к WSL из терминала Ubuntu
+Запустите в PowerShell -> WSL с Ubuntu командой:
+wsl
+
+4. Переходим в /home/as2 командой:
+cd
+
+5. Создать директорию (пример )proj1 командой:
+mkdir proj1
+
+или выбрать свою
+
+6. Перейдите в директорию, с которой вы хотите работать. Например: 
+cd ~/proj1.
+
+7. Введите в терминале команду:
+code .
+
+VS Code в Windows автоматически запустится и начнет устанавливать необходимые компоненты (сервер) внутри вашей Ubuntu. Это может занять некоторое время при первом запуске.
+
+После завершения установки вы увидите, что в левом нижнем углу VS Code появился зеленый индикатор, который подтверждает, что вы подключены к WSL. Теперь вы можете работать с файлами и использовать терминал Ubuntu (24.04) прямо из VS Code.    
+    
+=================================
+Установка Docker Desktop и интеграция с WSL2
+
+1. Скачайте и Установите последнюю версию Docker Desktop for Windows.
+https://docs.docker.com/desktop/setup/install/windows-install/ 
+
+2. Настройка при установке
+Во время установки убедитесь, что вы выбрали опцию "Use WSL 2 instead of Hyper-V". Эта опция является ключевой для интеграции с вашей средой Linux (Ubuntu 24.04). Установщик автоматически настроит Docker для работы с WSL2.
+
+Для вашей текущей цели — работы с Docker через WSL — вы можете спокойно нажать "Skip". Аккаунт потребуется, только если вы захотите загружать свои образы в публичное хранилище или использовать чужие приватные образы.
+
+3. Настройка интеграции с WSL
+После установки запустите Docker Desktop.
+
+Перейдите в Settings (Настройки) -> Resources (Ресурсы) -> WSL Integration (Интеграция с WSL).
+
+Найдите вашу установленную среду Linux (например, Ubuntu) в списке и включите для нее переключатель. 
+
+Нажмите кнопку "Apply & Restart" (Применить и перезапустить) в правом нижнем углу.
+
+После этого Docker Desktop перезапустится, и вы сможете использовать команды Docker напрямую из терминала Ubuntu.
+
+!!! Чтобы убедиться, что Docker правильно установлен и доступен из WSL, выполните в PowerShell следующую команду:
+wsl --shutdown
+
+Эта команда полностью перезагрузит подсистему WSL и применит все изменения, внесённые установщиком Docker.
+
+4. Проверка установки
+Откройте ваш терминал WSL - Ubuntu командой:
+wsl
+
+5. Выполните простую команду, чтобы убедиться, что Docker работает:
+docker --version
+
+Если команда вернет версию Docker, значит, всё настроено правильно.
+
+Для дополнительной проверки запустите тестовый контейнер:
+docker run hello-world
+
+Это загрузит и запустит образ hello-world и покажет подтверждающее сообщение.
+
+После этого вы сможете работать с Docker, создавая и запуская контейнеры прямо из вашей среды WSL2.
+
+=====================================================================================================
+Проверка Docker на реальном Примере Север, PHP, Apache, MySQL...
+Урок 2: Установка Laravel 12, Sail, Breeze, Spatie, phpMyAdmin. Запуск проекта.
+
+Ссылка на параллельный урок в Ubuntu:
+https://www.youtube.com/watch?v=fGWh_uCqElU
+
+--------------
+=== Урок 1 Версии ПО для работы с Docker
+=== About the system and software
+
+lsb_release -a
+    No LSB modules are available.
+    Distributor ID:	Ubuntu
+    Description:	Ubuntu 22.04.5 LTS
+    Release:	22.04
+    Codename:	jammy
+docker -v
+    Docker version 28.1.1, build 4eba377
+docker-compose -v
+    Docker Compose version v2.12.2
+composer -V
+    Composer 2.2.6 2022-02-04 17:00:38
+code -v
+    1.99.3
+    17baf841131aa23349f217ca7c570c76ee87b957
+    x64
+
+--- Установка composer, php8.3-xml
+sudo apt update
+sudo apt install composer
+sudo apt install php8.3-xml
+
+--- Очистить вывод в окне
+clear
+
+--- Посмотреть список команд
+history
+
+--- Удалить историю комнад
+history -c
+
+В терминале Ubuntu:
+копировать Ctrl+Shift+c
+вставить Ctrl+Shift+v
+
+
+=== Урок 2 Установка Laravel 12, sail, Breeze, запуск проекта
+
+============================================
+=== Laravel 12 === ~/project1/la12sail1 ===
+============================================
+Документация:
+
+https://laravel.com/docs/12.x/installation
+    Laravel Breeze док от Laravel 11
+https://laravel.com/docs/11.x/starter-kits#breeze-and-next
+    Spatie v6
+https://spatie.be/docs/laravel-permission/v6/installation-laravel
+    Bootstrap 5
+https://getbootstrap.com/docs/5.0/getting-started/introduction/
+
+--- Создать/перейти в директорию проекта, запустить VScode
+
+mkdir project1
+cd project1
+mkdir la12sail1
+cd la12sail1
+code .
+
+--- При записи видео будут включены паузы длительных процессов
+
+--- Установка Laravel 12 в текущую (пустую) директорию
+composer create-project laravel/laravel .
+
+--- https://laravel.com/docs/12.x/sail#main-content
+--- Установка Sail Into в существующие приложения
+composer require laravel/sail --dev
+
+--- Команда Опубликует docker-compose.yml файл Sail и изменит .env
+    файл для подключения к службам Docker
+
+php artisan sail:install
+  выбрать базу например -> mysql нажать Enter
+
+--- Настройка Базы Данных в файле .env
+
+DB_CONNECTION=mysql
+DB_HOST=mysql # имя сервиса в yml файле
+DB_PORT=3306
+DB_DATABASE=la12sail1
+DB_USERNAME=sail
+DB_PASSWORD=password
+
+--- (опционально, Для моих целей) Добавил phpmyadmin в docker-compose.yml, задал имена контейнерам.
+
+services:
+    laravel.test:
+        build:
+            context: './vendor/laravel/sail/runtimes/8.4'
+            dockerfile: Dockerfile
+            args:
+                WWWGROUP: '${WWWGROUP}'
+        image: 'sail-8.4/app'
+        container_name: l12s_web # Задаем имя контейнера для сервиса web
+        extra_hosts:
+            - 'host.docker.internal:host-gateway'
+        ports:
+            - '${APP_PORT:-80}:80'
+            - '${VITE_PORT:-5173}:${VITE_PORT:-5173}'
+        environment:
+            WWWUSER: '${WWWUSER}'
+            LARAVEL_SAIL: 1
+            XDEBUG_MODE: '${SAIL_XDEBUG_MODE:-off}'
+            XDEBUG_CONFIG: '${SAIL_XDEBUG_CONFIG:-client_host=host.docker.internal}'
+            IGNITION_LOCAL_SITES_PATH: '${PWD}'
+        volumes:
+            - '.:/var/www/html'
+        networks:
+            - sail
+        depends_on:
+            - mysql
+    mysql:
+        image: 'mysql/mysql-server:8.0'
+        container_name: l12s_mysql  # Задаем имя контейнера для сервиса mysql
+        ports:
+            - '${FORWARD_DB_PORT:-3306}:3306'
+        environment:
+            MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+            MYSQL_ROOT_HOST: '%'
+            MYSQL_DATABASE: '${DB_DATABASE}'
+            MYSQL_USER: '${DB_USERNAME}'
+            MYSQL_PASSWORD: '${DB_PASSWORD}'
+            MYSQL_ALLOW_EMPTY_PASSWORD: 1
+            MYSQL_EXTRA_OPTIONS: '${MYSQL_EXTRA_OPTIONS}'
+        volumes:
+            - 'sail-mysql:/var/lib/mysql'
+            - './vendor/laravel/sail/database/mysql/create-testing-database.sh:/docker-entrypoint-initdb.d/10-create-testing-database.sh'
+        networks:
+            - sail
+        healthcheck:
+            test:
+                - CMD
+                - mysqladmin
+                - ping
+                - '-p${DB_PASSWORD}'
+            retries: 3
+            timeout: 5s
+
+    phpmyadmin: # добавил сервис входа в phpmyadmin
+        image: 'phpmyadmin:latest'
+        container_name: l12s_phpmyadmin  # Задаем имя контейнера для сервиса phpmyadmin
+        ports:
+            - '8080:80'
+        environment:
+            PMA_HOST: mysql
+            MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+        depends_on:
+            - mysql
+        networks:
+            - sail
+
+networks:
+    sail:
+        driver: bridge
+volumes:
+    sail-mysql:
+        driver: local
+
+
+
+
+--- команды - запустить, выгрузить контейнеры
+./vendor/bin/sail up
+./vendor/bin/sail down
+
+--- в nano ~/.bashrc добавляем в конец строку
+nano ~/.bashrc
+
+alias sail='sh $([ -f sail ] && echo sail || echo vendor/bin/sail)'
+  В nano: нажмите Ctrl+O (для записи/сохранения), затем Enter, затем Ctrl+X (для выхода)
+
+--- Чтобы изменения вступили в силу
+source ~/.bashrc
+
+--- После alias будут работать короткие команды
+sail up
+Выход Ctrl+c
+
+    Запуск в фоновом режиме
+sail up -d
+
+    Остановка проекта...
+sail down
+
+
+--- Запустить миграцию
+sail artisan migrate
+или
+./vendor/bin/sail artisan migrate
+
+--- Вход на сайт
+http://localhost/
+--- Вход в базу данных
+http://localhost:8080
+root
+password
+    или
+sail
+password
+
+--- вход в контейнер l12s_web (может быть другое). Имя container_name: l12s_web берем из
+--- docker-compose.yml. Определить NAME контейнеров можно командой docker-compose ps
+
+docker exec -it l12s_web bash
+
+--- Создаем символическую ссылку для доступа к папке storage
+sail artisan storage:link
+
+
+
+=== Установка Breeze аутентификация и регистрация
+
+--- ссылка на док https://laravel.com/docs/11.x/starter-kits#breeze-and-next
+composer require laravel/breeze --dev
+sail artisan breeze:install
+
+ ┌ Which Breeze stack would you like to install? ───────────────┐
+ │ Blade with Alpine                                            │
+ └──────────────────────────────────────────────────────────────┘
+
+ ┌ Would you like dark mode support? ───────────────────────────┐
+ │ No                                                           │
+ └──────────────────────────────────────────────────────────────┘
+
+ ┌ Which testing framework do you prefer? ──────────────────────┐
+ │ Pest                                                         │
+ └──────────────────────────────────────────────────────────────┘
+
+---
+sail artisan migrate
+
+--- Log in | Register Регистрация, вход, выход по тестовым данным сработал
+
+Name: test
+Login: test@gmail.com
+Password: 12345678
+
+    в базу данных users добавило запись 1 test test@gmail.com
+
+=== Установка spatie
+
+--- spatie ---
+https://spatie.be/docs/laravel-permission/v6/introduction
+
+--- https://spatie.be/docs/laravel-permission/v6/installation-laravel
+composer require spatie/laravel-permission
+
+--- Публикуем миграцию и config/permission.phpфайл конфигурации с помощью:
+sail artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider"
+
+--- spatie очистка
+sail artisan optimize:clear
+    или
+sail artisan config:clear
+
+--- spatie миграция
+sail artisan migrate
+
+    создаст таблицы и файлы
+        'role_has_permissions'
+        'model_has_roles'
+        'model_has_permissions'
+        'roles'
+        'permissions'
+
+        /config/permission.php
+        /database/migrations/xxxx_xx_xx_xxxxx_create_permission_tables.php
+
+---
+в файл app/Models/User.php добавлено
+use Spatie\Permission\Traits\HasRoles; // Добавлено
+...
+use HasFactory, Notifiable, HasRoles; // Добавлено HasRoles
+
+--- Вход на сайт
+http://localhost/
+--- Вход в базу данных
+http://localhost:8080
+root
+password
+
+--- Посмотреть список команд
+history
+
+--- Останавливает (выгружает) проект
+sail down
+
+-------------------------
+Остальные видео на канале! ))
+
+
